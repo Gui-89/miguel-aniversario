@@ -206,7 +206,7 @@ async function confirmarPresenca() {
       eventoData: CONFIG.eventoDataTexto,
       eventoHora: CONFIG.eventoHoraTexto,
       eventoLocal: CONFIG.eventoLocal,
-      msgPosEvento: false, // flag para saber se recebeu a mensagem de gratidão pós-evento
+      msgPosEvento: false,
     });
 
     // ── Confetes! ──
@@ -267,13 +267,11 @@ function abrirWhatsAppConfirmacao(numero, firstName, adultos, criancas) {
 
 // =========================================
 //  MENSAGEM PÓS-EVENTO (verificação client-side)
-//  Para automação completa, use Firebase Functions
 // =========================================
 function verificarMensagemPosEvento() {
   const eventoDate = new Date(CONFIG.eventoDataHora);
   const agora = new Date();
 
-  // Se o dia do evento E já passou das 21h
   const mesmoDia =
     agora.getDate()     === eventoDate.getDate() &&
     agora.getMonth()    === eventoDate.getMonth() &&
@@ -312,68 +310,112 @@ function iniciarAudio() {
   const btn   = document.getElementById('audio-btn');
   if (!audio || !btn) return;
 
-  // Configuração inicial
-  audio.volume      = 0.5;   // 50% de volume
-  audio.currentTime = 50;    // começa nos 50 segundos
+  // Estado de controle
+  let audioAtivo = false;
+  let interagiu  = false;
+
+  // Configuração inicial do áudio
+  audio.volume = 0.5;
+  audio.loop   = true;
 
   // Estilo do botão flutuante
   Object.assign(btn.style, {
-    position:     'fixed',
-    bottom:       '20px',
-    right:        '20px',
-    zIndex:       '9999',
-    width:        '48px',
-    height:       '48px',
-    borderRadius: '50%',
-    border:       'none',
-    background:   'linear-gradient(135deg, #1565C0, #0D47A1)',
-    color:        '#fff',
-    fontSize:     '20px',
-    cursor:       'pointer',
-    boxShadow:    '0 4px 16px rgba(21,101,192,0.45)',
-    transition:   'transform 0.2s, box-shadow 0.2s',
-    display:      'flex',
-    alignItems:   'center',
+    position:       'fixed',
+    bottom:         '20px',
+    right:          '20px',
+    zIndex:         '9999',
+    width:          '48px',
+    height:         '48px',
+    borderRadius:   '50%',
+    border:         'none',
+    background:     'linear-gradient(135deg, #1565C0, #0D47A1)',
+    color:          '#fff',
+    fontSize:       '20px',
+    cursor:         'pointer',
+    boxShadow:      '0 4px 16px rgba(21,101,192,0.45)',
+    transition:     'transform 0.2s, box-shadow 0.2s',
+    display:        'flex',
+    alignItems:     'center',
     justifyContent: 'center',
   });
   btn.onmouseenter = () => { btn.style.transform = 'scale(1.1)'; };
   btn.onmouseleave = () => { btn.style.transform = 'scale(1)'; };
 
-  // Botão liga/desliga
-  btn.addEventListener('click', () => {
-    if (audio.paused) {
-      audio.play().catch(() => {});
-      btn.textContent = '🔊';
-    } else {
+  // Função que realmente inicia o áudio (só após interação do usuário)
+  function iniciarPlayback() {
+    if (audioAtivo) return; // já tocando, não faz nada
+
+    // Define o ponto de início apenas na primeira vez
+    if (!interagiu) {
+      interagiu = true;
+      audio.currentTime = 50;
+    }
+
+    audio.play()
+      .then(() => {
+        audioAtivo = true;
+        btn.textContent = '🔊';
+      })
+      .catch(err => {
+        console.warn('Autoplay bloqueado:', err);
+        btn.textContent = '🔇';
+      });
+  }
+
+  // Botão de toggle manual
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation(); // evita que o clique no botão acione o listener global
+
+    if (!audio.paused) {
+      // Pausar
       audio.pause();
+      audioAtivo = false;
       btn.textContent = '🔇';
+    } else {
+      // Retomar / iniciar
+      if (!interagiu) {
+        interagiu = true;
+        audio.currentTime = 50;
+      }
+      audio.play()
+        .then(() => {
+          audioAtivo = true;
+          btn.textContent = '🔊';
+        })
+        .catch(() => {
+          btn.textContent = '🔇';
+        });
     }
   });
 
-  // Tenta autoplay imediato
-  const tentarPlay = () => {
-    audio.currentTime = 50;
-    audio.volume      = 0.5;
-    audio.play()
-      .then(() => {
-        btn.textContent = '🔊';
-        // Remove listeners de interação, não são mais necessários
-        document.removeEventListener('click',      tentarPlay);
-        document.removeEventListener('touchstart', tentarPlay);
-        document.removeEventListener('keydown',    tentarPlay);
-      })
-      .catch(() => {
-        // Autoplay bloqueado pelo navegador — aguarda primeira interação
-        btn.textContent = '🔇';
-      });
-  };
+  // Tenta autoplay imediato (funciona em alguns browsers/contextos)
+  audio.play()
+    .then(() => {
+      audioAtivo = true;
+      interagiu  = true;
+      audio.currentTime = 50;
+      btn.textContent = '🔊';
+    })
+    .catch(() => {
+      // Autoplay bloqueado — aguarda primeira interação real do usuário
+      btn.textContent = '🔇';
 
-  tentarPlay();
+      // Handler único para qualquer interação do usuário
+      function onPrimeiraInteracao() {
+        // Remove todos os listeners de uma vez
+        document.removeEventListener('click',      onPrimeiraInteracao);
+        document.removeEventListener('touchstart', onPrimeiraInteracao);
+        document.removeEventListener('keydown',    onPrimeiraInteracao);
+        document.removeEventListener('scroll',     onPrimeiraInteracao);
 
-  // Fallback: dispara no primeiro toque/clique/tecla do usuário
-  document.addEventListener('click',      tentarPlay, { once: true });
-  document.addEventListener('touchstart', tentarPlay, { once: true });
-  document.addEventListener('keydown',    tentarPlay, { once: true });
+        iniciarPlayback();
+      }
+
+      document.addEventListener('click',      onPrimeiraInteracao);
+      document.addEventListener('touchstart', onPrimeiraInteracao);
+      document.addEventListener('keydown',    onPrimeiraInteracao);
+      document.addEventListener('scroll',     onPrimeiraInteracao);
+    });
 }
 
 // =========================================
@@ -405,7 +447,6 @@ function dispararConfetes() {
     });
   }
 
-  let frame;
   let elapsed = 0;
   const DURATION = 4500;
 
@@ -431,7 +472,7 @@ function dispararConfetes() {
     });
 
     if (progress < 1) {
-      frame = requestAnimationFrame(draw);
+      requestAnimationFrame(draw);
     } else {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
@@ -439,7 +480,7 @@ function dispararConfetes() {
 
   requestAnimationFrame(draw);
 
-  // Dispara uma segunda onda de confetes
+  // Segunda onda de confetes
   setTimeout(() => {
     elapsed = 0;
     PIECES.forEach(p => {
