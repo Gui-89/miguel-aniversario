@@ -18,7 +18,7 @@ const CONFIG = {
   eventoEndereco: 'Q3 CL 02, Sobradinho 1, Lj 06 — Sobradinho', // ← ALTERE AQUI
 
   // Link do Google Maps (cole o link de compartilhamento do Maps)
-  eventoMapsLink: 'https://share.google/D70I1DCpZGlVN9pWS', // ← ALTERE AQUI
+  eventoMapsLink: 'https://maps.app.goo.gl/MrXs2yjAjWQcN9No7', // ← ALTERE AQUI
 
   // Hora para mensagem pós-evento (em horas, formato 24h)
   horaMensagemPosEvento: 21,
