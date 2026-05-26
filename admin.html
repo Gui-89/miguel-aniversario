@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🐾 Admin — Convidados do Miguel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue: #1565C0; --blue-mid: #1976D2; --blue-light: #42A5F5;
+      --red: #D32F2F; --yellow: #F9A825; --white: #fff;
+      --off-white: #F0F7FF; --dark: #0D1B2A; --text: #1A237E;
+    }
+    body { font-family: 'Nunito', sans-serif; background: var(--off-white); color: var(--text); min-height: 100vh; }
+
+    .admin-header {
+      background: linear-gradient(135deg, var(--blue), #0D47A1);
+      color: white; padding: 24px 20px; text-align: center;
+    }
+    .admin-header h1 { font-family: 'Fredoka One', cursive; font-size: 28px; margin-bottom: 4px; }
+    .admin-header p { opacity: 0.8; font-size: 14px; }
+
+    .admin-body { max-width: 900px; margin: 0 auto; padding: 30px 16px; }
+
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 28px;
+    }
+    @media (max-width: 500px) { .stats-grid { grid-template-columns: 1fr; } }
+
+    .stat-card {
+      background: white; border-radius: 16px; padding: 20px;
+      box-shadow: 0 4px 16px rgba(21,101,192,0.12);
+      text-align: center; border: 2px solid rgba(21,101,192,0.1);
+    }
+    .stat-num { font-family: 'Fredoka One', cursive; font-size: 40px; color: var(--blue); }
+    .stat-label { font-size: 12px; font-weight: 800; color: #607D8B; text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+
+    .section-head {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 16px; flex-wrap: wrap; gap: 10px;
+    }
+    .section-head h2 { font-family: 'Fredoka One', cursive; font-size: 22px; color: var(--blue); }
+
+    .btn {
+      background: var(--blue); color: white; border: none;
+      padding: 10px 20px; border-radius: 50px; font-family: 'Nunito', sans-serif;
+      font-size: 14px; font-weight: 800; cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 12px rgba(21,101,192,0.3);
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(21,101,192,0.4); }
+    .btn-red { background: var(--red); box-shadow: 0 4px 12px rgba(211,47,47,0.3); }
+    .btn-red:hover { box-shadow: 0 8px 20px rgba(211,47,47,0.4); }
+    .btn-green { background: #2E7D32; box-shadow: 0 4px 12px rgba(46,125,50,0.3); }
+
+    .guest-card {
+      background: white; border-radius: 16px; padding: 18px 20px;
+      box-shadow: 0 4px 16px rgba(21,101,192,0.08);
+      border: 2px solid rgba(21,101,192,0.08);
+      margin-bottom: 12px;
+      display: grid; grid-template-columns: 1fr auto;
+      gap: 10px; align-items: center;
+    }
+    .guest-info { }
+    .guest-name { font-size: 17px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+    .guest-meta { font-size: 13px; color: #607D8B; font-weight: 600; }
+    .guest-meta span { margin-right: 12px; }
+    .guest-wpp { font-size: 12px; color: var(--blue); font-weight: 700; margin-top: 3px; }
+    .guest-date { font-size: 11px; color: #90A4AE; margin-top: 2px; }
+
+    .guest-actions { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
+
+    .loading { text-align: center; padding: 40px; color: #90A4AE; font-size: 16px; font-weight: 700; }
+    .empty { text-align: center; padding: 40px; color: #90A4AE; font-size: 16px; }
+
+    .search-input {
+      width: 100%; padding: 12px 16px; border: 2px solid #E3EEFF;
+      border-radius: 12px; font-size: 15px; font-family: 'Nunito', sans-serif;
+      font-weight: 600; color: var(--dark); background: white;
+      outline: none; margin-bottom: 20px;
+    }
+    .search-input:focus { border-color: var(--blue-light); }
+
+    .pos-evento-section {
+      background: linear-gradient(135deg, #E8F5E9, #C8E6C9);
+      border: 2px solid #A5D6A7;
+      border-radius: 16px; padding: 20px; margin-bottom: 28px;
+    }
+    .pos-evento-section h3 { font-family: 'Fredoka One', cursive; color: #2E7D32; margin-bottom: 8px; }
+    .pos-evento-section p { font-size: 14px; color: #388E3C; margin-bottom: 14px; font-weight: 600; }
+
+    .msg-template {
+      background: white; border-radius: 12px; padding: 14px;
+      font-size: 13px; color: #455A64; line-height: 1.6;
+      border: 1px solid #C8E6C9; margin-bottom: 14px;
+      white-space: pre-wrap; font-family: 'Nunito', sans-serif;
+    }
+
+    .export-section {
+      background: white; border-radius: 16px; padding: 20px;
+      box-shadow: 0 4px 16px rgba(21,101,192,0.08); margin-bottom: 28px;
+    }
+    .export-section h3 { font-family: 'Fredoka One', cursive; color: var(--blue); margin-bottom: 10px; }
+
+    #numbers-list {
+      background: #F8FBFF; border-radius: 10px; padding: 12px;
+      font-size: 12px; font-family: monospace; color: #1A237E;
+      margin: 10px 0; max-height: 120px; overflow-y: auto;
+      border: 1px solid #E3EEFF; white-space: pre-wrap;
+    }
+
+    .back-link { color: var(--blue); font-size: 14px; font-weight: 700; text-decoration: none; opacity: 0.7; }
+    .back-link:hover { opacity: 1; }
+  </style>
+</head>
+<body>
+
+  <div class="admin-header">
+    <h1>🐾 Painel de Convidados</h1>
+    <p>Miguel 4 Anos — Gestão de RSVPs</p>
+  </div>
+
+  <div class="admin-body">
+
+    <div style="margin-bottom:20px;">
+      <a class="back-link" href="index.html">← Voltar ao site</a>
+    </div>
+
+    <!-- ESTATÍSTICAS -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-num" id="total-grupos">—</div>
+        <div class="stat-label">Grupos confirmados</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="total-adultos">—</div>
+        <div class="stat-label">Total de adultos</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="total-criancas">—</div>
+        <div class="stat-label">Total de crianças</div>
+      </div>
+    </div>
+
+    <!-- MENSAGEM PÓS-EVENTO -->
+    <div class="pos-evento-section">
+      <h3>🎉 Mensagem Pós-Evento</h3>
+      <p>Envie agradecimento aos convidados depois da festa (use após as 21h do dia do evento):</p>
+      <div class="msg-template" id="template-pos-evento">🐾 Que festão incrível foi essa! 🎉
+
+Obrigado por fazer parte desse dia tão especial do nosso *Miguel*! Sua presença foi o melhor presente! 🎈
+
+Foi uma alegria enorme ter vocês com a gente nessa aventura da Patrulha Canina! 🐕🚒🚓
+
+Com muito amor,
+Família do Miguel 💙🐾</div>
+      <button class="btn btn-green" onclick="enviarTodosWpp()">
+        📲 Enviar para todos (abre WhatsApp um a um)
+      </button>
+    </div>
+
+    <!-- EXPORTAR NÚMEROS -->
+    <div class="export-section">
+      <h3>📋 Exportar Números</h3>
+      <p style="font-size:13px;color:#607D8B;font-weight:600;margin-bottom:8px;">Copie os números abaixo para usar em outras ferramentas:</p>
+      <div id="numbers-list">Carregando...</div>
+      <button class="btn" style="margin-top:4px;font-size:13px;padding:8px 16px;" onclick="copiarNumeros()">📋 Copiar tudo</button>
+    </div>
+
+    <!-- LISTA DE CONVIDADOS -->
+    <div class="section-head">
+      <h2>📋 Convidados Confirmados</h2>
+      <button class="btn" onclick="carregarConvidados()">🔄 Atualizar</button>
+    </div>
+
+    <input class="search-input" type="text" id="search" placeholder="🔍 Buscar por nome ou WhatsApp..." oninput="filtrarConvidados()" />
+
+    <div id="guest-list">
+      <div class="loading">⏳ Carregando convidados...</div>
+    </div>
+
+  </div>
+
+  <!-- FIREBASE -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+
+  <script>
+    let todosConvidados = [];
+
+    async function carregarConvidados() {
+      document.getElementById('guest-list').innerHTML = '<div class="loading">⏳ Carregando...</div>';
+
+      try {
+        const snap = await convidadosRef.orderBy('confirmadoEm', 'desc').get();
+        todosConvidados = [];
+
+        snap.forEach(doc => {
+          todosConvidados.push({ id: doc.id, ...doc.data() });
+        });
+
+        atualizarStats();
+        renderizarConvidados(todosConvidados);
+        atualizarNumeros();
+
+      } catch (err) {
+        document.getElementById('guest-list').innerHTML =
+          `<div class="empty">❌ Erro ao carregar: ${err.message}</div>`;
+      }
+    }
+
+    function atualizarStats() {
+      const grupos    = todosConvidados.length;
+      const adultos   = todosConvidados.reduce((s, g) => s + (g.adultos   || 0), 0);
+      const criancas  = todosConvidados.reduce((s, g) => s + (g.criancas  || 0), 0);
+
+      document.getElementById('total-grupos').textContent   = grupos;
+      document.getElementById('total-adultos').textContent  = adultos;
+      document.getElementById('total-criancas').textContent = criancas;
+    }
+
+    function renderizarConvidados(lista) {
+      const el = document.getElementById('guest-list');
+
+      if (lista.length === 0) {
+        el.innerHTML = '<div class="empty">🐾 Nenhum convidado confirmado ainda.</div>';
+        return;
+      }
+
+      el.innerHTML = lista.map(g => {
+        const data = g.confirmadoEm
+          ? new Date(g.confirmadoEm.toDate()).toLocaleString('pt-BR')
+          : 'Data não registrada';
+        const total = (g.adultos || 0) + (g.criancas || 0);
+        const nome1 = (g.nome || '').split(' ')[0];
+
+        return `
+          <div class="guest-card">
+            <div class="guest-info">
+              <div class="guest-name">${g.nome || '—'}</div>
+              <div class="guest-meta">
+                <span>🧑 ${g.adultos || 0} adulto(s)</span>
+                <span>👧 ${g.criancas || 0} criança(s)</span>
+                <span>👥 ${total} total</span>
+              </div>
+              <div class="guest-wpp">📱 ${formatarWpp(g.whatsapp || '')}</div>
+              <div class="guest-date">✅ Confirmado em: ${data}</div>
+            </div>
+            <div class="guest-actions">
+              <button class="btn btn-green" style="font-size:12px;padding:7px 14px;"
+                onclick="abrirWppIndividual('${g.whatsappCompleto || '55' + g.whatsapp}', '${escapar(nome1)}')">
+                📲 Enviar
+              </button>
+              <button class="btn" style="font-size:12px;padding:7px 14px;"
+                onclick="abrirWppConfirmacao('${g.whatsappCompleto || '55' + g.whatsapp}', '${escapar(g.nome || '')}', ${g.adultos || 0}, ${g.criancas || 0})">
+                ✉️ Confirmação
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function filtrarConvidados() {
+      const termo = document.getElementById('search').value.toLowerCase();
+      const filtrados = todosConvidados.filter(g =>
+        (g.nome || '').toLowerCase().includes(termo) ||
+        (g.whatsapp || '').includes(termo)
+      );
+      renderizarConvidados(filtrados);
+    }
+
+    function atualizarNumeros() {
+      const nums = todosConvidados.map(g =>
+        `+${g.whatsappCompleto || '55' + g.whatsapp} (${g.nome || ''})`
+      ).join('\n');
+      document.getElementById('numbers-list').textContent = nums || 'Nenhum número ainda.';
+    }
+
+    function copiarNumeros() {
+      const nums = todosConvidados.map(g => '+' + (g.whatsappCompleto || '55' + g.whatsapp)).join('\n');
+      navigator.clipboard.writeText(nums).then(() => alert('✅ Números copiados!'));
+    }
+
+    // Envia mensagem pós-evento individual
+    function abrirWppIndividual(numero, nome) {
+      const template = document.getElementById('template-pos-evento').textContent;
+      const msg = encodeURIComponent(template);
+      window.open(`https://wa.me/${numero}?text=${msg}`, '_blank');
+    }
+
+    // Abre mensagem de confirmação (caso queira reenviar)
+    function abrirWppConfirmacao(numero, nome, adultos, criancas) {
+      const firstName = nome.split(' ')[0];
+      const total = adultos + criancas;
+      const msg = encodeURIComponent(
+        `🐾 *Presença Confirmada — Relembrete!*\n\n` +
+        `Olá, *${firstName}*! 👋\n\n` +
+        `Só passando para confirmar que sua presença está registrada! 🎉\n\n` +
+        `👤 ${nome} | 🧑 ${adultos} adulto(s) | 👧 ${criancas} criança(s)\n\n` +
+        `Com carinho, família do Miguel 🐾💙`
+      );
+      window.open(`https://wa.me/${numero}?text=${msg}`, '_blank');
+    }
+
+    // Envio em massa (abre um a um com intervalo)
+    let fila = [];
+    let filaIndex = 0;
+
+    function enviarTodosWpp() {
+      if (todosConvidados.length === 0) {
+        alert('Nenhum convidado para enviar!');
+        return;
+      }
+      if (!confirm(`Enviar mensagem pós-evento para ${todosConvidados.length} convidado(s)? O WhatsApp abrirá um de cada vez.`)) return;
+
+      fila = [...todosConvidados];
+      filaIndex = 0;
+      enviarProximo();
+    }
+
+    function enviarProximo() {
+      if (filaIndex >= fila.length) {
+        alert('✅ Todas as mensagens foram abertas!');
+        return;
+      }
+      const g = fila[filaIndex];
+      const template = document.getElementById('template-pos-evento').textContent;
+      const msg = encodeURIComponent(template);
+      window.open(`https://wa.me/${g.whatsappCompleto || '55' + g.whatsapp}?text=${msg}`, '_blank');
+      filaIndex++;
+      if (filaIndex < fila.length) {
+        setTimeout(() => {
+          if (confirm(`✅ Enviado para ${g.nome}!\n\nEnviar para o próximo: ${fila[filaIndex].nome}?`)) {
+            enviarProximo();
+          }
+        }, 800);
+      } else {
+        setTimeout(() => alert('🎉 Todas as mensagens foram abertas!'), 800);
+      }
+    }
+
+    // Helpers
+    function formatarWpp(num) {
+      if (!num) return '—';
+      const v = num.replace(/\D/g, '');
+      if (v.length === 11) return `(${v.slice(0,2)}) ${v.slice(2,7)}-${v.slice(7)}`;
+      if (v.length === 10) return `(${v.slice(0,2)}) ${v.slice(2,6)}-${v.slice(6)}`;
+      return num;
+    }
+    function escapar(str) { return (str || '').replace(/'/g, "\\'"); }
+
+    // Carrega ao abrir
+    carregarConvidados();
+  </script>
+</body>
+</html>

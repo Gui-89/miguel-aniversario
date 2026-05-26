@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🐾 Miguel faz 4 Anos! — Confirme sua Presença</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐾</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- CANVAS CONFETTI -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- PAWS BACKGROUND -->
+  <div class="paws-bg" aria-hidden="true"></div>
+
+  <!-- HEADER HERO -->
+  <header class="hero">
+    <div class="hero-badge">🐾 VOCÊ ESTÁ CONVIDADO! 🐾</div>
+
+    <!-- Coloque seu banner aqui: substitua o bloco abaixo por <img src="assets/banner.png" class="hero-banner" alt="Banner Patrulha Canina"> -->
+    <img src="assets/banner.png" class="hero-banner" alt="Banner Patrulha Canina"/>
+      <div class="banner-inner">
+        <div class="paw-patrol-logo">
+          <span class="logo-text">PAW</span>
+          <span class="logo-paw">🐾</span>
+          <span class="logo-text">PATROL</span>
+        </div>
+        <div class="miguel-name">Miguel</div>
+        <div class="age-display">
+          <span class="age-num">4</span>
+          <span class="age-word">anos!</span>
+        </div>
+        <div class="hero-dogs">🐕 🚒 🚓 🚁 🐕</div>
+      </div>
+    </div>
+    <!-- FIM DO BANNER PLACEHOLDER -->
+
+    <div class="hero-tagline">
+      <span>Uma missão especial te aguarda!</span>
+    </div>
+
+    <!-- COUNTDOWN -->
+    <div class="countdown-wrapper">
+      <div class="countdown-label">⏰ Faltam para a missão começar:</div>
+      <div class="countdown-boxes" id="countdown">
+        <div class="count-box"><span id="cd-days">--</span><small>dias</small></div>
+        <div class="count-sep">:</div>
+        <div class="count-box"><span id="cd-hours">--</span><small>horas</small></div>
+        <div class="count-sep">:</div>
+        <div class="count-box"><span id="cd-mins">--</span><small>min</small></div>
+        <div class="count-sep">:</div>
+        <div class="count-box"><span id="cd-secs">--</span><small>seg</small></div>
+      </div>
+      <div id="event-passed-msg" class="event-passed hidden">🎉 O evento aconteceu! Que festa incrível! 🎉</div>
+    </div>
+  </header>
+
+  <!-- DETALHES DO EVENTO -->
+  <section class="event-details">
+    <h2 class="section-title">📋 Detalhes da Missão</h2>
+    <div class="details-grid">
+      <div class="detail-card">
+        <div class="detail-icon">📅</div>
+        <div class="detail-label">Data</div>
+        <!-- ✏️ EDITE AQUI: data do evento -->
+        <div class="detail-value" id="event-date-display">__/__/____</div>
+      </div>
+      <div class="detail-card">
+        <div class="detail-icon">⏰</div>
+        <div class="detail-label">Horário</div>
+        <!-- ✏️ EDITE AQUI: horário do evento -->
+        <div class="detail-value" id="event-time-display">__h00</div>
+      </div>
+      <div class="detail-card">
+        <div class="detail-icon">📍</div>
+        <div class="detail-label">Local</div>
+        <!-- ✏️ EDITE AQUI: nome do local -->
+        <div class="detail-value" id="event-place-display">Nome do Local</div>
+      </div>
+    </div>
+    <a class="maps-btn" id="maps-link" href="#" target="_blank" rel="noopener">
+      🗺️ Ver no Google Maps
+    </a>
+  </section>
+
+  <!-- FORMULÁRIO RSVP -->
+  <section class="rsvp-section" id="rsvp">
+    <div class="rsvp-card">
+      <div class="rsvp-top-dog">🐶</div>
+      <h2 class="rsvp-title">Confirme sua Presença!</h2>
+      <p class="rsvp-subtitle">A patrulha precisa saber quem vem reforçar a missão!</p>
+
+      <div id="form-wrapper">
+        <div class="input-group">
+          <label for="nome">👤 Nome do Responsável *</label>
+          <input type="text" id="nome" placeholder="Seu nome completo" maxlength="80" autocomplete="name" />
+        </div>
+
+        <div class="input-row">
+          <div class="input-group">
+            <label for="adultos">🧑 Adultos *</label>
+            <div class="counter-control">
+              <button class="counter-btn" data-target="adultos" data-action="minus">−</button>
+              <input type="number" id="adultos" value="1" min="0" max="20" readonly />
+              <button class="counter-btn" data-target="adultos" data-action="plus">+</button>
+            </div>
+          </div>
+          <div class="input-group">
+            <label for="criancas">👧 Crianças *</label>
+            <div class="counter-control">
+              <button class="counter-btn" data-target="criancas" data-action="minus">−</button>
+              <input type="number" id="criancas" value="0" min="0" max="20" readonly />
+              <button class="counter-btn" data-target="criancas" data-action="plus">+</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="whatsapp">📱 WhatsApp *</label>
+          <input type="tel" id="whatsapp" placeholder="(11) 99999-9999" maxlength="15" autocomplete="tel" />
+        </div>
+
+        <div id="form-error" class="form-error hidden"></div>
+
+        <button class="confirm-btn" id="confirm-btn" onclick="confirmarPresenca()">
+          <span class="btn-icon">🐾</span>
+          <span class="btn-text">Confirmar Presença!</span>
+          <span class="btn-loader hidden" id="btn-loader">⏳</span>
+        </button>
+
+        <p class="form-note">* Todos os campos são obrigatórios</p>
+      </div>
+
+      <!-- TELA DE SUCESSO -->
+      <div id="success-screen" class="hidden">
+        <div class="success-emoji">🎉</div>
+        <h3 class="success-title">Presença Confirmada!</h3>
+        <p class="success-msg" id="success-msg"></p>
+        <div class="success-details">
+          <div class="success-detail-row">📅 <strong id="s-date"></strong></div>
+          <div class="success-detail-row">⏰ <strong id="s-time"></strong></div>
+          <div class="success-detail-row">📍 <strong id="s-place"></strong></div>
+        </div>
+        <a class="maps-btn-success" id="maps-link-success" href="#" target="_blank" rel="noopener">
+          🗺️ Ver localização no Maps
+        </a>
+        <p class="success-footer">Mal podemos esperar para te ver lá! 🐕💙</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-paws">🐾🐾🐾</div>
+    <p>Festa do Miguel 🎈 com muito amor</p>
+    <p class="footer-small">® Todos os direitos reservados 2026 •  Pai do Miguel rsrsrs </p>
+  </footer>
+
+  <!-- FIREBASE SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+  <!-- SCRIPTS -->
+  <script src="firebase-config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
