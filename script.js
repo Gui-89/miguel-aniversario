@@ -37,6 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
   configurarMascaraWhatsApp();
   verificarMensagemPosEvento();
   configurarContadores();
+  iniciarAudio();
 });
 
 // =========================================
@@ -303,92 +304,81 @@ function mostrarBannerPosEvento() {
   document.body.prepend(banner);
 }
 
+// =========================================
+//  ÁUDIO DE FUNDO 🎵
+// =========================================
+function iniciarAudio() {
+  const audio = document.getElementById('bg-audio');
+  const btn   = document.getElementById('audio-btn');
+  if (!audio || !btn) return;
+
+  // Configuração inicial
+  audio.volume      = 0.5;   // 50% de volume
+  audio.currentTime = 50;    // começa nos 50 segundos
+
+  // Estilo do botão flutuante
+  Object.assign(btn.style, {
+    position:     'fixed',
+    bottom:       '20px',
+    right:        '20px',
+    zIndex:       '9999',
+    width:        '48px',
+    height:       '48px',
+    borderRadius: '50%',
+    border:       'none',
+    background:   'linear-gradient(135deg, #1565C0, #0D47A1)',
+    color:        '#fff',
+    fontSize:     '20px',
+    cursor:       'pointer',
+    boxShadow:    '0 4px 16px rgba(21,101,192,0.45)',
+    transition:   'transform 0.2s, box-shadow 0.2s',
+    display:      'flex',
+    alignItems:   'center',
+    justifyContent: 'center',
+  });
+  btn.onmouseenter = () => { btn.style.transform = 'scale(1.1)'; };
+  btn.onmouseleave = () => { btn.style.transform = 'scale(1)'; };
+
+  // Botão liga/desliga
+  btn.addEventListener('click', () => {
+    if (audio.paused) {
+      audio.play().catch(() => {});
+      btn.textContent = '🔊';
+    } else {
+      audio.pause();
+      btn.textContent = '🔇';
+    }
+  });
+
+  // Tenta autoplay imediato
+  const tentarPlay = () => {
+    audio.currentTime = 50;
+    audio.volume      = 0.5;
+    audio.play()
+      .then(() => {
+        btn.textContent = '🔊';
+        // Remove listeners de interação, não são mais necessários
+        document.removeEventListener('click',      tentarPlay);
+        document.removeEventListener('touchstart', tentarPlay);
+        document.removeEventListener('keydown',    tentarPlay);
+      })
+      .catch(() => {
+        // Autoplay bloqueado pelo navegador — aguarda primeira interação
+        btn.textContent = '🔇';
+      });
+  };
+
+  tentarPlay();
+
+  // Fallback: dispara no primeiro toque/clique/tecla do usuário
+  document.addEventListener('click',      tentarPlay, { once: true });
+  document.addEventListener('touchstart', tentarPlay, { once: true });
+  document.addEventListener('keydown',    tentarPlay, { once: true });
+}
 
 // =========================================
 //  CONFETES 🎉
 // =========================================
-(function () {
-  const START_SECONDS = 50;   // começa nos 50s do MP3
-  const START_VOLUME  = 0.5;  // 50% de volume inicial
-
-  const audio   = document.getElementById('bg-music');
-  const toggle  = document.getElementById('music-toggle');
-  const slider  = document.getElementById('volume-slider');
-
-  if (!audio || !toggle || !slider) return;
-
-  // Configura áudio
-  audio.volume      = START_VOLUME;
-  audio.currentTime = START_SECONDS;
-
-  // Atualiza visual do slider (fundo degradê)
-  function atualizarSlider(val) {
-    slider.style.setProperty('--vol-pct', val + '%');
-  }
-  atualizarSlider(START_VOLUME * 100);
-
-  // Tenta autoplay; em mobile exige interação do usuário
-  function tentarPlay() {
-    audio.currentTime = START_SECONDS;
-    audio.play().then(() => {
-      toggle.classList.remove('paused');
-    }).catch(() => {
-      // Autoplay bloqueado — aguarda primeira interação
-      toggle.classList.add('paused');
-    });
-  }
-
-  // Primeira interação do usuário desbloqueia o áudio em mobile
-  function primeiraInteracao() {
-    if (audio.paused) {
-      audio.play().then(() => toggle.classList.remove('paused')).catch(() => {});
-    }
-    document.removeEventListener('touchstart', primeiraInteracao, { once: true });
-    document.removeEventListener('click',      primeiraInteracao, { once: true });
-  }
-  document.addEventListener('touchstart', primeiraInteracao, { once: true });
-  document.addEventListener('click',      primeiraInteracao, { once: true });
-
-  tentarPlay();
-
-  // Botão play/pause
-  toggle.addEventListener('click', (e) => {
-    e.stopPropagation(); // não acionar primeiraInteracao
-    if (audio.paused) {
-      audio.play().then(() => toggle.classList.remove('paused')).catch(() => {});
-    } else {
-      audio.pause();
-      toggle.classList.add('paused');
-    }
-  });
-
-  // Slider de volume
-  slider.addEventListener('input', () => {
-    const vol = parseInt(slider.value, 10);
-    audio.volume = vol / 100;
-    atualizarSlider(vol);
-
-    // Ícone muda conforme volume
-    if (vol === 0) {
-      toggle.textContent = '🔇';
-    } else if (vol < 40) {
-      toggle.textContent = '🔉';
-    } else {
-      toggle.textContent = audio.paused ? '⏸️' : '🎵';
-    }
-  });
-
-  // Atualiza ícone ao pausar/tocar externamente
-  audio.addEventListener('play',  () => {
-    if (parseInt(slider.value) > 0) toggle.textContent = '🎵';
-    toggle.classList.remove('paused');
-  });
-  audio.addEventListener('pause', () => {
-    toggle.classList.add('paused');
-    if (parseInt(slider.value) > 0) toggle.textContent = '⏸️';
-  });
-})();
-
 function dispararConfetes() {
   const canvas = document.getElementById('confetti-canvas');
   const ctx    = canvas.getContext('2d');
