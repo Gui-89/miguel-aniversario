@@ -655,6 +655,117 @@ body {
   100% { transform: scale(1); }
 }
 
+/* ── MUSIC PLAYER FLUTUANTE ── */
+.music-player {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(13, 27, 42, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  border-radius: 50px;
+  padding: 8px 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  transition: padding 0.3s ease, background 0.3s ease;
+}
+.music-player:hover {
+  background: rgba(21, 101, 192, 0.85);
+}
+
+.music-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  padding: 0;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+.music-toggle:hover { transform: scale(1.2); }
+.music-toggle.paused { opacity: 0.55; }
+
+.volume-slider-wrap {
+  width: 0;
+  overflow: hidden;
+  transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+  opacity: 0;
+  display: flex;
+  align-items: center;
+}
+.music-player:hover .volume-slider-wrap,
+.music-player:focus-within .volume-slider-wrap {
+  width: 80px;
+  opacity: 1;
+}
+
+/* Slider de volume */
+.volume-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 75px;
+  height: 4px;
+  border-radius: 4px;
+  background: linear-gradient(
+    to right,
+    var(--yellow) 0%,
+    var(--yellow) var(--vol-pct, 50%),
+    rgba(255,255,255,0.25) var(--vol-pct, 50%),
+    rgba(255,255,255,0.25) 100%
+  );
+  outline: none;
+  cursor: pointer;
+}
+.volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--yellow);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+.volume-slider::-webkit-slider-thumb:hover { transform: scale(1.3); }
+.volume-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--yellow);
+  border: none;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+  cursor: pointer;
+}
+.volume-slider::-moz-range-track {
+  height: 4px;
+  border-radius: 4px;
+  background: rgba(255,255,255,0.25);
+}
+
+/* Mobile: player um pouco menor */
+@media (max-width: 480px) {
+  .music-player {
+    bottom: 14px;
+    left: 14px;
+    padding: 7px 9px;
+  }
+  .music-toggle { font-size: 16px; width: 24px; height: 24px; }
+  .music-player:hover .volume-slider-wrap,
+  .music-player:focus-within .volume-slider-wrap { width: 70px; }
+  .volume-slider { width: 65px; }
+}
+
 /* ── ADMIN LINK (hidden, só para você) ── */
 .admin-link {
   position: fixed;
