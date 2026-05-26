@@ -18,7 +18,7 @@ const CONFIG = {
   eventoEndereco: 'Q3 CL 02, Sobradinho 1, Lj 06 — Sobradinho', // ← ALTERE AQUI
 
   // Link do Google Maps (cole o link de compartilhamento do Maps)
-  eventoMapsLink: 'https://maps.app.goo.gl/QbumbwMmn3cDUW3i8', // ← ALTERE AQUI
+  eventoMapsLink: 'https://share.google/D70I1DCpZGlVN9pWS', // ← ALTERE AQUI
 
   // Hora para mensagem pós-evento (em horas, formato 24h)
   horaMensagemPosEvento: 21,
@@ -303,9 +303,92 @@ function mostrarBannerPosEvento() {
   document.body.prepend(banner);
 }
 
+
 // =========================================
 //  CONFETES 🎉
 // =========================================
+(function () {
+  const START_SECONDS = 50;   // começa nos 50s do MP3
+  const START_VOLUME  = 0.5;  // 50% de volume inicial
+
+  const audio   = document.getElementById('bg-music');
+  const toggle  = document.getElementById('music-toggle');
+  const slider  = document.getElementById('volume-slider');
+
+  if (!audio || !toggle || !slider) return;
+
+  // Configura áudio
+  audio.volume      = START_VOLUME;
+  audio.currentTime = START_SECONDS;
+
+  // Atualiza visual do slider (fundo degradê)
+  function atualizarSlider(val) {
+    slider.style.setProperty('--vol-pct', val + '%');
+  }
+  atualizarSlider(START_VOLUME * 100);
+
+  // Tenta autoplay; em mobile exige interação do usuário
+  function tentarPlay() {
+    audio.currentTime = START_SECONDS;
+    audio.play().then(() => {
+      toggle.classList.remove('paused');
+    }).catch(() => {
+      // Autoplay bloqueado — aguarda primeira interação
+      toggle.classList.add('paused');
+    });
+  }
+
+  // Primeira interação do usuário desbloqueia o áudio em mobile
+  function primeiraInteracao() {
+    if (audio.paused) {
+      audio.play().then(() => toggle.classList.remove('paused')).catch(() => {});
+    }
+    document.removeEventListener('touchstart', primeiraInteracao, { once: true });
+    document.removeEventListener('click',      primeiraInteracao, { once: true });
+  }
+  document.addEventListener('touchstart', primeiraInteracao, { once: true });
+  document.addEventListener('click',      primeiraInteracao, { once: true });
+
+  tentarPlay();
+
+  // Botão play/pause
+  toggle.addEventListener('click', (e) => {
+    e.stopPropagation(); // não acionar primeiraInteracao
+    if (audio.paused) {
+      audio.play().then(() => toggle.classList.remove('paused')).catch(() => {});
+    } else {
+      audio.pause();
+      toggle.classList.add('paused');
+    }
+  });
+
+  // Slider de volume
+  slider.addEventListener('input', () => {
+    const vol = parseInt(slider.value, 10);
+    audio.volume = vol / 100;
+    atualizarSlider(vol);
+
+    // Ícone muda conforme volume
+    if (vol === 0) {
+      toggle.textContent = '🔇';
+    } else if (vol < 40) {
+      toggle.textContent = '🔉';
+    } else {
+      toggle.textContent = audio.paused ? '⏸️' : '🎵';
+    }
+  });
+
+  // Atualiza ícone ao pausar/tocar externamente
+  audio.addEventListener('play',  () => {
+    if (parseInt(slider.value) > 0) toggle.textContent = '🎵';
+    toggle.classList.remove('paused');
+  });
+  audio.addEventListener('pause', () => {
+    toggle.classList.add('paused');
+    if (parseInt(slider.value) > 0) toggle.textContent = '⏸️';
+  });
+})();
+
 function dispararConfetes() {
   const canvas = document.getElementById('confetti-canvas');
   const ctx    = canvas.getContext('2d');
