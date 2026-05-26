@@ -54,6 +54,8 @@
     .btn-red { background: var(--red); box-shadow: 0 4px 12px rgba(211,47,47,0.3); }
     .btn-red:hover { box-shadow: 0 8px 20px rgba(211,47,47,0.4); }
     .btn-green { background: #2E7D32; box-shadow: 0 4px 12px rgba(46,125,50,0.3); }
+    .btn-orange { background: #E65100; box-shadow: 0 4px 12px rgba(230,81,0,0.3); }
+    .btn-orange:hover { box-shadow: 0 8px 20px rgba(230,81,0,0.4); }
 
     .guest-card {
       background: white; border-radius: 16px; padding: 18px 20px;
@@ -62,6 +64,10 @@
       margin-bottom: 12px;
       display: grid; grid-template-columns: 1fr auto;
       gap: 10px; align-items: center;
+      transition: opacity 0.3s, transform 0.3s;
+    }
+    .guest-card.removing {
+      opacity: 0; transform: scale(0.95);
     }
     .guest-info { }
     .guest-name { font-size: 17px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
@@ -71,6 +77,25 @@
     .guest-date { font-size: 11px; color: #90A4AE; margin-top: 2px; }
 
     .guest-actions { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
+
+    /* Botão de lixeira menor */
+    .btn-delete {
+      background: none;
+      border: 2px solid #FFCDD2;
+      color: var(--red);
+      padding: 5px 10px;
+      border-radius: 50px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      font-family: 'Nunito', sans-serif;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+    }
+    .btn-delete:hover {
+      background: var(--red);
+      color: white;
+      border-color: var(--red);
+    }
 
     .loading { text-align: center; padding: 40px; color: #90A4AE; font-size: 16px; font-weight: 700; }
     .empty { text-align: center; padding: 40px; color: #90A4AE; font-size: 16px; }
@@ -98,11 +123,15 @@
       white-space: pre-wrap; font-family: 'Nunito', sans-serif;
     }
 
+    /* ── EXPORTAR ── */
     .export-section {
       background: white; border-radius: 16px; padding: 20px;
       box-shadow: 0 4px 16px rgba(21,101,192,0.08); margin-bottom: 28px;
     }
-    .export-section h3 { font-family: 'Fredoka One', cursive; color: var(--blue); margin-bottom: 10px; }
+    .export-section h3 { font-family: 'Fredoka One', cursive; color: var(--blue); margin-bottom: 6px; }
+    .export-section p { font-size: 13px; color: #607D8B; font-weight: 600; margin-bottom: 14px; }
+
+    .export-btns { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
 
     #numbers-list {
       background: #F8FBFF; border-radius: 10px; padding: 12px;
@@ -111,11 +140,72 @@
       border: 1px solid #E3EEFF; white-space: pre-wrap;
     }
 
+    /* ── MODAL DE CONFIRMAÇÃO DE EXCLUSÃO ── */
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(13,27,42,0.55);
+      z-index: 9000;
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: white; border-radius: 20px; padding: 28px 28px 24px;
+      max-width: 380px; width: 90%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      text-align: center; animation: pop-in 0.2s ease;
+    }
+    @keyframes pop-in {
+      from { transform: scale(0.85); opacity: 0; }
+      to   { transform: scale(1);    opacity: 1; }
+    }
+    .modal-icon { font-size: 44px; margin-bottom: 10px; }
+    .modal-title { font-family: 'Fredoka One', cursive; font-size: 22px; color: var(--red); margin-bottom: 8px; }
+    .modal-msg { font-size: 14px; color: #607D8B; font-weight: 600; margin-bottom: 22px; line-height: 1.5; }
+    .modal-actions { display: flex; gap: 10px; justify-content: center; }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+      background: #263238; color: white; padding: 12px 24px;
+      border-radius: 50px; font-size: 14px; font-weight: 700;
+      z-index: 9999; transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+      white-space: nowrap; box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
     .back-link { color: var(--blue); font-size: 14px; font-weight: 700; text-decoration: none; opacity: 0.7; }
     .back-link:hover { opacity: 1; }
+
+    /* ── PRINT / PDF ── */
+    @media print {
+      .admin-header, .pos-evento-section, .export-section,
+      .section-head button, .search-input, .guest-actions,
+      .back-link, .modal-overlay, .toast { display: none !important; }
+      body { background: white; }
+      .admin-body { padding: 0; }
+      .stats-grid { break-inside: avoid; }
+      .guest-card { box-shadow: none; border: 1px solid #ddd; break-inside: avoid; }
+    }
   </style>
 </head>
 <body>
+
+  <!-- MODAL CONFIRMAÇÃO DE EXCLUSÃO -->
+  <div class="modal-overlay" id="delete-modal">
+    <div class="modal-box">
+      <div class="modal-icon">🗑️</div>
+      <div class="modal-title">Excluir registro?</div>
+      <div class="modal-msg" id="modal-msg">Tem certeza que deseja excluir este convidado? Esta ação não pode ser desfeita.</div>
+      <div class="modal-actions">
+        <button class="btn" onclick="fecharModal()">Cancelar</button>
+        <button class="btn btn-red" id="modal-confirm-btn" onclick="confirmarExclusao()">Excluir</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
 
   <div class="admin-header">
     <h1>🐾 Painel de Convidados</h1>
@@ -161,12 +251,16 @@ Família do Miguel 💙🐾</div>
       </button>
     </div>
 
-    <!-- EXPORTAR NÚMEROS -->
+    <!-- EXPORTAR -->
     <div class="export-section">
-      <h3>📋 Exportar Números</h3>
-      <p style="font-size:13px;color:#607D8B;font-weight:600;margin-bottom:8px;">Copie os números abaixo para usar em outras ferramentas:</p>
+      <h3>📊 Exportar Dados</h3>
+      <p>Exporte a lista de convidados para análise ou impressão:</p>
+      <div class="export-btns">
+        <button class="btn btn-green" onclick="exportarCSV()">📥 Baixar CSV</button>
+        <button class="btn btn-orange" onclick="imprimirLista()">🖨️ Imprimir / PDF</button>
+        <button class="btn" style="font-size:13px;padding:8px 16px;" onclick="copiarNumeros()">📋 Copiar números</button>
+      </div>
       <div id="numbers-list">Carregando...</div>
-      <button class="btn" style="margin-top:4px;font-size:13px;padding:8px 16px;" onclick="copiarNumeros()">📋 Copiar tudo</button>
     </div>
 
     <!-- LISTA DE CONVIDADOS -->
@@ -190,22 +284,19 @@ Família do Miguel 💙🐾</div>
 
   <script>
     let todosConvidados = [];
+    let idParaExcluir   = null;
+    let nomeParaExcluir = '';
 
+    // ── CARREGAR ──────────────────────────────
     async function carregarConvidados() {
       document.getElementById('guest-list').innerHTML = '<div class="loading">⏳ Carregando...</div>';
-
       try {
         const snap = await convidadosRef.orderBy('confirmadoEm', 'desc').get();
         todosConvidados = [];
-
-        snap.forEach(doc => {
-          todosConvidados.push({ id: doc.id, ...doc.data() });
-        });
-
+        snap.forEach(doc => todosConvidados.push({ id: doc.id, ...doc.data() }));
         atualizarStats();
         renderizarConvidados(todosConvidados);
         atualizarNumeros();
-
       } catch (err) {
         document.getElementById('guest-list').innerHTML =
           `<div class="empty">❌ Erro ao carregar: ${err.message}</div>`;
@@ -213,86 +304,250 @@ Família do Miguel 💙🐾</div>
     }
 
     function atualizarStats() {
-      const grupos    = todosConvidados.length;
-      const adultos   = todosConvidados.reduce((s, g) => s + (g.adultos   || 0), 0);
-      const criancas  = todosConvidados.reduce((s, g) => s + (g.criancas  || 0), 0);
-
-      document.getElementById('total-grupos').textContent   = grupos;
-      document.getElementById('total-adultos').textContent  = adultos;
-      document.getElementById('total-criancas').textContent = criancas;
+      document.getElementById('total-grupos').textContent   = todosConvidados.length;
+      document.getElementById('total-adultos').textContent  = todosConvidados.reduce((s,g) => s+(g.adultos||0),0);
+      document.getElementById('total-criancas').textContent = todosConvidados.reduce((s,g) => s+(g.criancas||0),0);
     }
 
+    // ── RENDERIZAR ────────────────────────────
     function renderizarConvidados(lista) {
       const el = document.getElementById('guest-list');
-
       if (lista.length === 0) {
         el.innerHTML = '<div class="empty">🐾 Nenhum convidado confirmado ainda.</div>';
         return;
       }
-
       el.innerHTML = lista.map(g => {
-        const data = g.confirmadoEm
+        const data  = g.confirmadoEm
           ? new Date(g.confirmadoEm.toDate()).toLocaleString('pt-BR')
           : 'Data não registrada';
-        const total = (g.adultos || 0) + (g.criancas || 0);
-        const nome1 = (g.nome || '').split(' ')[0];
-
+        const total = (g.adultos||0) + (g.criancas||0);
+        const nome1 = (g.nome||'').split(' ')[0];
         return `
-          <div class="guest-card">
+          <div class="guest-card" id="card-${g.id}">
             <div class="guest-info">
-              <div class="guest-name">${g.nome || '—'}</div>
+              <div class="guest-name">${g.nome||'—'}</div>
               <div class="guest-meta">
-                <span>🧑 ${g.adultos || 0} adulto(s)</span>
-                <span>👧 ${g.criancas || 0} criança(s)</span>
+                <span>🧑 ${g.adultos||0} adulto(s)</span>
+                <span>👧 ${g.criancas||0} criança(s)</span>
                 <span>👥 ${total} total</span>
               </div>
-              <div class="guest-wpp">📱 ${formatarWpp(g.whatsapp || '')}</div>
+              <div class="guest-wpp">📱 ${formatarWpp(g.whatsapp||'')}</div>
               <div class="guest-date">✅ Confirmado em: ${data}</div>
             </div>
             <div class="guest-actions">
               <button class="btn btn-green" style="font-size:12px;padding:7px 14px;"
-                onclick="abrirWppIndividual('${g.whatsappCompleto || '55' + g.whatsapp}', '${escapar(nome1)}')">
+                onclick="abrirWppIndividual('${g.whatsappCompleto||'55'+g.whatsapp}','${escapar(nome1)}')">
                 📲 Enviar
               </button>
               <button class="btn" style="font-size:12px;padding:7px 14px;"
-                onclick="abrirWppConfirmacao('${g.whatsappCompleto || '55' + g.whatsapp}', '${escapar(g.nome || '')}', ${g.adultos || 0}, ${g.criancas || 0})">
+                onclick="abrirWppConfirmacao('${g.whatsappCompleto||'55'+g.whatsapp}','${escapar(g.nome||'')}',${g.adultos||0},${g.criancas||0})">
                 ✉️ Confirmação
               </button>
+              <button class="btn-delete"
+                onclick="pedirExclusao('${g.id}','${escapar(g.nome||'')}')">
+                🗑️ Excluir
+              </button>
             </div>
-          </div>
-        `;
+          </div>`;
       }).join('');
     }
 
     function filtrarConvidados() {
       const termo = document.getElementById('search').value.toLowerCase();
       const filtrados = todosConvidados.filter(g =>
-        (g.nome || '').toLowerCase().includes(termo) ||
-        (g.whatsapp || '').includes(termo)
+        (g.nome||'').toLowerCase().includes(termo) ||
+        (g.whatsapp||'').includes(termo)
       );
       renderizarConvidados(filtrados);
     }
 
     function atualizarNumeros() {
       const nums = todosConvidados.map(g =>
-        `+${g.whatsappCompleto || '55' + g.whatsapp} (${g.nome || ''})`
+        `+${g.whatsappCompleto||'55'+g.whatsapp} (${g.nome||''})`
       ).join('\n');
       document.getElementById('numbers-list').textContent = nums || 'Nenhum número ainda.';
     }
 
-    function copiarNumeros() {
-      const nums = todosConvidados.map(g => '+' + (g.whatsappCompleto || '55' + g.whatsapp)).join('\n');
-      navigator.clipboard.writeText(nums).then(() => alert('✅ Números copiados!'));
+    // ── EXCLUIR ───────────────────────────────
+    function pedirExclusao(id, nome) {
+      idParaExcluir   = id;
+      nomeParaExcluir = nome;
+      document.getElementById('modal-msg').textContent =
+        `Tem certeza que deseja excluir "${nome}"? Esta ação não pode ser desfeita.`;
+      document.getElementById('delete-modal').classList.add('open');
     }
 
-    // Envia mensagem pós-evento individual
+    function fecharModal() {
+      document.getElementById('delete-modal').classList.remove('open');
+      idParaExcluir = null;
+    }
+
+    async function confirmarExclusao() {
+      if (!idParaExcluir) return;
+
+      const btn = document.getElementById('modal-confirm-btn');
+      btn.disabled = true;
+      btn.textContent = '⏳ Excluindo...';
+
+      try {
+        // Animação de saída no card
+        const card = document.getElementById(`card-${idParaExcluir}`);
+        if (card) card.classList.add('removing');
+
+        await convidadosRef.doc(idParaExcluir).delete();
+
+        // Remove da lista local
+        todosConvidados = todosConvidados.filter(g => g.id !== idParaExcluir);
+
+        fecharModal();
+        atualizarStats();
+        renderizarConvidados(todosConvidados);
+        atualizarNumeros();
+        mostrarToast(`✅ "${nomeParaExcluir}" removido com sucesso!`);
+
+      } catch (err) {
+        fecharModal();
+        mostrarToast(`❌ Erro ao excluir: ${err.message}`);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Excluir';
+      }
+    }
+
+    // ── EXPORTAR CSV ──────────────────────────
+    function exportarCSV() {
+      if (todosConvidados.length === 0) {
+        mostrarToast('⚠️ Nenhum dado para exportar!');
+        return;
+      }
+
+      // Ordena por nome
+      const ordenados = [...todosConvidados].sort((a,b) =>
+        (a.nome||'').localeCompare(b.nome||'', 'pt-BR')
+      );
+
+      const cabecalho = ['Nome','Adultos','Crianças','Total','WhatsApp','Confirmado em'];
+      const linhas = ordenados.map(g => {
+        const data = g.confirmadoEm
+          ? new Date(g.confirmadoEm.toDate()).toLocaleString('pt-BR')
+          : '';
+        const total = (g.adultos||0)+(g.criancas||0);
+        const wpp = '+' + (g.whatsappCompleto||'55'+g.whatsapp);
+        // Escapa aspas duplas em campos
+        const esc = v => `"${String(v).replace(/"/g,'""')}"`;
+        return [esc(g.nome||''),g.adultos||0,g.criancas||0,total,esc(wpp),esc(data)].join(',');
+      });
+
+      // Linha de totais
+      const totalAdultos  = todosConvidados.reduce((s,g)=>s+(g.adultos||0),0);
+      const totalCriancas = todosConvidados.reduce((s,g)=>s+(g.criancas||0),0);
+      linhas.push(`"TOTAL","${totalAdultos}","${totalCriancas}","${totalAdultos+totalCriancas}","",""`);
+
+      const csv = '\uFEFF' + [cabecalho.join(','), ...linhas].join('\r\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      a.href     = url;
+      a.download = `convidados-miguel-4anos.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      mostrarToast('📥 CSV exportado com sucesso!');
+    }
+
+    // ── IMPRIMIR / PDF ────────────────────────
+    function imprimirLista() {
+      if (todosConvidados.length === 0) {
+        mostrarToast('⚠️ Nenhum dado para imprimir!');
+        return;
+      }
+
+      const ordenados = [...todosConvidados].sort((a,b) =>
+        (a.nome||'').localeCompare(b.nome||'', 'pt-BR')
+      );
+
+      const totalAdultos  = todosConvidados.reduce((s,g)=>s+(g.adultos||0),0);
+      const totalCriancas = todosConvidados.reduce((s,g)=>s+(g.criancas||0),0);
+      const totalPessoas  = totalAdultos + totalCriancas;
+
+      const linhas = ordenados.map((g, i) => {
+        const wpp = (g.whatsappCompleto||'55'+g.whatsapp);
+        const data = g.confirmadoEm
+          ? new Date(g.confirmadoEm.toDate()).toLocaleString('pt-BR')
+          : '—';
+        const total = (g.adultos||0)+(g.criancas||0);
+        return `
+          <tr style="background:${i%2===0?'#F8FBFF':'white'}">
+            <td>${i+1}</td>
+            <td><strong>${g.nome||'—'}</strong></td>
+            <td style="text-align:center">${g.adultos||0}</td>
+            <td style="text-align:center">${g.criancas||0}</td>
+            <td style="text-align:center"><strong>${total}</strong></td>
+            <td>+${wpp}</td>
+            <td style="font-size:11px;color:#607D8B">${data}</td>
+          </tr>`;
+      }).join('');
+
+      const html = `<!DOCTYPE html><html lang="pt-BR"><head>
+        <meta charset="UTF-8"/>
+        <title>Convidados — Miguel 4 Anos</title>
+        <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+        <style>
+          body { font-family: 'Nunito', sans-serif; padding: 24px 32px; color: #1A237E; }
+          h1 { font-family: 'Fredoka One', cursive; font-size: 26px; color: #1565C0; margin-bottom: 4px; }
+          .sub { font-size: 13px; color: #607D8B; margin-bottom: 20px; }
+          .resumo { display: flex; gap: 20px; margin-bottom: 24px; }
+          .res-box { background: #F0F7FF; border-radius: 10px; padding: 12px 20px; text-align: center; border: 2px solid #E3EEFF; }
+          .res-num { font-family: 'Fredoka One', cursive; font-size: 32px; color: #1565C0; }
+          .res-label { font-size: 11px; color: #607D8B; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+          table { width: 100%; border-collapse: collapse; font-size: 13px; }
+          th { background: #1565C0; color: white; padding: 10px 12px; text-align: left; font-size: 12px; letter-spacing: 0.5px; }
+          td { padding: 9px 12px; border-bottom: 1px solid #E3EEFF; }
+          .total-row td { background: #E8F5E9; font-weight: 800; color: #2E7D32; }
+          @media print { @page { margin: 1.5cm; } }
+        </style>
+      </head><body>
+        <h1>🐾 Convidados — Miguel 4 Anos</h1>
+        <div class="sub">Gerado em ${new Date().toLocaleString('pt-BR')} • Total de grupos: ${todosConvidados.length}</div>
+        <div class="resumo">
+          <div class="res-box"><div class="res-num">${todosConvidados.length}</div><div class="res-label">Grupos</div></div>
+          <div class="res-box"><div class="res-num">${totalAdultos}</div><div class="res-label">Adultos</div></div>
+          <div class="res-box"><div class="res-num">${totalCriancas}</div><div class="res-label">Crianças</div></div>
+          <div class="res-box"><div class="res-num">${totalPessoas}</div><div class="res-label">Total</div></div>
+        </div>
+        <table>
+          <thead><tr>
+            <th>#</th><th>Nome</th><th>Adultos</th><th>Crianças</th><th>Total</th><th>WhatsApp</th><th>Confirmado em</th>
+          </tr></thead>
+          <tbody>${linhas}
+            <tr class="total-row">
+              <td colspan="2">TOTAL GERAL</td>
+              <td style="text-align:center">${totalAdultos}</td>
+              <td style="text-align:center">${totalCriancas}</td>
+              <td style="text-align:center">${totalPessoas}</td>
+              <td colspan="2"></td>
+            </tr>
+          </tbody>
+        </table>
+      </body></html>`;
+
+      const win = window.open('', '_blank');
+      win.document.write(html);
+      win.document.close();
+      win.onload = () => win.print();
+    }
+
+    // ── COPIAR NÚMEROS ────────────────────────
+    function copiarNumeros() {
+      const nums = todosConvidados.map(g => '+' + (g.whatsappCompleto||'55'+g.whatsapp)).join('\n');
+      navigator.clipboard.writeText(nums).then(() => mostrarToast('✅ Números copiados!'));
+    }
+
+    // ── WHATSAPP ──────────────────────────────
     function abrirWppIndividual(numero, nome) {
       const template = document.getElementById('template-pos-evento').textContent;
-      const msg = encodeURIComponent(template);
-      window.open(`https://wa.me/${numero}?text=${msg}`, '_blank');
+      window.open(`https://wa.me/${numero}?text=${encodeURIComponent(template)}`, '_blank');
     }
 
-    // Abre mensagem de confirmação (caso queira reenviar)
     function abrirWppConfirmacao(numero, nome, adultos, criancas) {
       const firstName = nome.split(' ')[0];
       const total = adultos + criancas;
@@ -306,54 +561,56 @@ Família do Miguel 💙🐾</div>
       window.open(`https://wa.me/${numero}?text=${msg}`, '_blank');
     }
 
-    // Envio em massa (abre um a um com intervalo)
-    let fila = [];
-    let filaIndex = 0;
+    // ── ENVIO EM MASSA ────────────────────────
+    let fila = [], filaIndex = 0;
 
     function enviarTodosWpp() {
-      if (todosConvidados.length === 0) {
-        alert('Nenhum convidado para enviar!');
-        return;
-      }
+      if (todosConvidados.length === 0) { mostrarToast('⚠️ Nenhum convidado para enviar!'); return; }
       if (!confirm(`Enviar mensagem pós-evento para ${todosConvidados.length} convidado(s)? O WhatsApp abrirá um de cada vez.`)) return;
-
-      fila = [...todosConvidados];
-      filaIndex = 0;
+      fila = [...todosConvidados]; filaIndex = 0;
       enviarProximo();
     }
 
     function enviarProximo() {
-      if (filaIndex >= fila.length) {
-        alert('✅ Todas as mensagens foram abertas!');
-        return;
-      }
+      if (filaIndex >= fila.length) { alert('✅ Todas as mensagens foram abertas!'); return; }
       const g = fila[filaIndex];
-      const template = document.getElementById('template-pos-evento').textContent;
-      const msg = encodeURIComponent(template);
-      window.open(`https://wa.me/${g.whatsappCompleto || '55' + g.whatsapp}?text=${msg}`, '_blank');
+      const msg = encodeURIComponent(document.getElementById('template-pos-evento').textContent);
+      window.open(`https://wa.me/${g.whatsappCompleto||'55'+g.whatsapp}?text=${msg}`, '_blank');
       filaIndex++;
       if (filaIndex < fila.length) {
         setTimeout(() => {
-          if (confirm(`✅ Enviado para ${g.nome}!\n\nEnviar para o próximo: ${fila[filaIndex].nome}?`)) {
-            enviarProximo();
-          }
+          if (confirm(`✅ Enviado para ${g.nome}!\n\nEnviar para o próximo: ${fila[filaIndex].nome}?`)) enviarProximo();
         }, 800);
       } else {
         setTimeout(() => alert('🎉 Todas as mensagens foram abertas!'), 800);
       }
     }
 
-    // Helpers
+    // ── TOAST ─────────────────────────────────
+    let toastTimer;
+    function mostrarToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    // ── HELPERS ───────────────────────────────
     function formatarWpp(num) {
       if (!num) return '—';
-      const v = num.replace(/\D/g, '');
-      if (v.length === 11) return `(${v.slice(0,2)}) ${v.slice(2,7)}-${v.slice(7)}`;
-      if (v.length === 10) return `(${v.slice(0,2)}) ${v.slice(2,6)}-${v.slice(6)}`;
+      const v = num.replace(/\D/g,'');
+      if (v.length===11) return `(${v.slice(0,2)}) ${v.slice(2,7)}-${v.slice(7)}`;
+      if (v.length===10) return `(${v.slice(0,2)}) ${v.slice(2,6)}-${v.slice(6)}`;
       return num;
     }
-    function escapar(str) { return (str || '').replace(/'/g, "\\'"); }
+    function escapar(str) { return (str||'').replace(/'/g,"\\'").replace(/"/g,"&quot;"); }
 
-    // Carrega ao abrir
+    // Fecha modal ao clicar fora
+    document.getElementById('delete-modal').addEventListener('click', function(e) {
+      if (e.target === this) fecharModal();
+    });
+
     carregarConvidados();
   </script>
 </body>
