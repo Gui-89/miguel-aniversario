@@ -11,7 +11,7 @@ const CONFIG = {
 
   // Exibição amigável
   eventoDataTexto: '13 de Junho de 2026',  // ← ALTERE AQUI
-  eventoHoraTexto: '18h00',                   // ← ALTERE AQUI
+  eventoHoraTexto: '17h00',                   // ← ALTERE AQUI
 
   // Nome e endereço do local
   eventoLocal: 'Hamburgo Adventure ',     // ← ALTERE AQUI
