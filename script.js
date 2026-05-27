@@ -7,7 +7,7 @@
 
 const CONFIG = {
   // Data e hora do evento (formato: 'AAAA-MM-DDTHH:MM:SS')
-  eventoDataHora: '2026-06-13T18:00:00',  // ← ALTERE AQUI
+  eventoDataHora: '2026-06-13T17:00:00',  // ← ALTERE AQUI
 
   // Exibição amigável
   eventoDataTexto: '13 de Junho de 2026',  // ← ALTERE AQUI
