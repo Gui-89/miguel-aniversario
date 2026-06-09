@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>🐾 Miguel faz 4 Anos! — Confirme sua Presença</title>
+  <title>🐾 Miguel faz 4 Anos!</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐾</text></svg>" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -18,34 +18,47 @@
   <!-- PAWS BACKGROUND -->
   <div class="paws-bg" aria-hidden="true"></div>
 
-  <!-- ══════════════════════════════════════════════
-       BANNER COPA DO MUNDO — DESTAQUE FIXO NO TOPO
-       ══════════════════════════════════════════════ -->
-  <div class="copa-banner" id="copa-banner">
-    <div class="copa-banner-inner">
-      <div class="copa-flag">BR</div>
-      <div class="copa-text">
-        <span class="copa-headline">TEREMOS TRANSMISSÃO DO 1º JOGO DO BRASIL NA COPA!</span>
-        <span class="copa-sub">ENTÃO ISSO NÃO PODE SER SUA DESCULPA PRA NÃO IR! 😂🏆</span>
+  <!-- ══════════════════════════
+       SEÇÃO 1: NEYMAR MEME HERO
+       ══════════════════════════ -->
+  <section class="neymar-hero">
+    <div class="neymar-wrap">
+      <div class="neymar-paper">
+        <span>Ihhh confirmações para o</span>
+        <span>aniversário do Miguel</span>
+        <span class="neymar-paper-destaque">ENCERRADAS! 😱</span>
       </div>
-      <div class="copa-flag">⚽</div>
+      <img src="neymar_meme.png" alt="Confirmações encerradas!" class="neymar-img" />
     </div>
-    <button class="copa-close" onclick="document.getElementById('copa-banner').style.display='none'" aria-label="Fechar aviso">✕</button>
-  </div>
+  </section>
 
-  <!-- HEADER HERO -->
+  <!-- ══════════════════════════
+       SEÇÃO 2: CARD ENCERRAMENTO
+       ══════════════════════════ -->
+  <section class="encerramento-section">
+    <div class="encerramento-card">
+      <div class="encerramento-card-icon">🔒</div>
+      <h3 class="encerramento-card-title">Confirmações Encerradas</h3>
+      <p class="encerramento-card-msg">
+        Agradecemos imensamente o carinho e a animação de todos! 🎉<br/><br/>
+        As confirmações de presença para o aniversário do <strong>Miguel</strong> foram encerradas.<br/><br/>
+        Para obter mais informações ou tirar dúvidas, entre em contato diretamente com os pais do pequeno. 💙
+      </p>
+      <p class="encerramento-card-sub">Obrigado por fazer parte dessa festa tão especial! 🐾</p>
+      <div class="encerramento-patas">🐾 🐾 🐾</div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════
+       SEÇÃO 3: ENCARTE DA FESTA
+       ══════════════════════════ -->
   <header class="hero">
-    <div class="hero-badge">🐾 VOCÊ ESTÁ CONVIDADO! 🐾</div>
-
+    <div class="hero-badge">🐾 MIGUEL FAZ 4 ANOS! 🐾</div>
     <img src="assets/banner.png" class="hero-banner" alt="Banner Patrulha Canina"/>
+    <div class="hero-tagline"><span>Uma missão especial te aguardou!</span></div>
 
-    <div class="hero-tagline">
-      <span>Uma missão especial te aguarda!</span>
-    </div>
-
-    <!-- COUNTDOWN -->
     <div class="countdown-wrapper">
-      <div class="countdown-label">⏰ Faltam para a missão começar:</div>
+      <div class="countdown-label">⏰ Contagem da missão:</div>
       <div class="countdown-boxes" id="countdown">
         <div class="count-box"><span id="cd-days">--</span><small>dias</small></div>
         <div class="count-sep">:</div>
@@ -59,7 +72,6 @@
     </div>
   </header>
 
-  <!-- DETALHES DO EVENTO -->
   <section class="event-details">
     <h2 class="section-title">📋 Detalhes da Missão</h2>
     <div class="details-grid">
@@ -84,102 +96,6 @@
     </a>
   </section>
 
-  <!-- ══════════════════════════════════════════════
-       SEÇÃO COPA — CARD DESTACADO (inline na página)
-       ══════════════════════════════════════════════ -->
-  <section class="copa-section">
-    <div class="copa-card">
-      <div class="copa-card-stars" aria-hidden="true">★ ★ ★ ★ ★</div>
-      <div class="copa-card-emojis">🇧🇷 ⚽ 🏆 ⚽ 🇧🇷</div>
-      <h3 class="copa-card-title">AVISO IMPORTANTE!</h3>
-      <p class="copa-card-msg">
-        TEREMOS TRANSMISSÃO DO 1º JOGO DO BRASIL NA COPA!<br/>
-        <strong>ENTÃO ISSO NÃO PODE SER SUA DESCULPA PRA NÃO IR!</strong>
-      </p>
-      <p class="copa-card-laugh">KAKAKAKAKAKAKAKA 😂😂😂</p>
-      <div class="copa-neymar-wrap">
-        <img
-          src="https://i.pinimg.com/originals/58/7f/38/587f386f2e808dd2e4ae14c5db719cab.gif"
-          alt="Neymar comemorando"
-          class="copa-neymar-gif"
-          loading="lazy"
-        />
-        <p class="copa-neymar-caption">O Neymar já sabe que você vai! 🎉</p>
-      </div>
-      <div class="copa-badge-row">
-        <span class="copa-badge">⚽ FUTEBOL</span>
-        <span class="copa-badge copa-badge-yellow">🎂 FESTA</span>
-        <span class="copa-badge copa-badge-red">🐾 PAW PATROL</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- FORMULÁRIO RSVP -->
-  <section class="rsvp-section" id="rsvp">
-    <div class="rsvp-card">
-      <div class="rsvp-top-dog">🐶</div>
-      <h2 class="rsvp-title">Confirme sua Presença!</h2>
-      <p class="rsvp-subtitle">A patrulha precisa saber quem vem reforçar a missão!</p>
-
-      <div id="form-wrapper">
-        <div class="input-group">
-          <label for="nome">👤 Nome do Responsável *</label>
-          <input type="text" id="nome" placeholder="Seu nome completo" maxlength="80" autocomplete="name" />
-        </div>
-
-        <div class="input-row">
-          <div class="input-group">
-            <label for="adultos">🧑 Adultos *</label>
-            <div class="counter-control">
-              <button class="counter-btn" data-target="adultos" data-action="minus">−</button>
-              <input type="number" id="adultos" value="1" min="0" max="20" readonly />
-              <button class="counter-btn" data-target="adultos" data-action="plus">+</button>
-            </div>
-          </div>
-          <div class="input-group">
-            <label for="criancas">👧 Crianças *</label>
-            <div class="counter-control">
-              <button class="counter-btn" data-target="criancas" data-action="minus">−</button>
-              <input type="number" id="criancas" value="0" min="0" max="20" readonly />
-              <button class="counter-btn" data-target="criancas" data-action="plus">+</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="input-group">
-          <label for="whatsapp">📱 WhatsApp *</label>
-          <input type="tel" id="whatsapp" placeholder="(61) 99999-9999" maxlength="15" autocomplete="tel" />
-        </div>
-
-        <div id="form-error" class="form-error hidden"></div>
-
-        <button class="confirm-btn" id="confirm-btn" onclick="confirmarPresenca()">
-          <span class="btn-icon">🐾</span>
-          <span class="btn-text">Confirmar Presença!</span>
-          <span class="btn-loader hidden" id="btn-loader">⏳</span>
-        </button>
-
-        <p class="form-note">* Todos os campos são obrigatórios</p>
-      </div>
-
-      <!-- TELA DE SUCESSO -->
-      <div id="success-screen" class="hidden">
-        <div class="success-emoji">🎉</div>
-        <h3 class="success-title">Presença Confirmada!</h3>
-        <p class="success-msg" id="success-msg"></p>
-        <div class="success-details">
-          <div class="success-detail-row">📅 <strong id="s-date"></strong></div>
-          <div class="success-detail-row">⏰ <strong id="s-time"></strong></div>
-          <div class="success-detail-row">📍 <strong id="s-place"></strong></div>
-        </div>
-        <a class="maps-btn-success" id="maps-link-success" href="#" target="_blank" rel="noopener">
-          🗺️ Ver localização no Maps
-        </a>
-        <p class="success-footer">Mal podemos esperar para te ver lá! 🐕💙</p>
-      </div>
-    </div>
-  </section>
-
   <!-- FOOTER -->
   <footer class="site-footer">
     <div class="footer-paws">🐾🐾🐾</div>
@@ -187,17 +103,22 @@
     <p class="footer-small">® Todos os direitos reservados 2026 • Pai do Miguel rsrsrs</p>
   </footer>
 
+  <!-- CAMPOS OCULTOS (lógica pós-evento preservada) -->
+  <div style="display:none">
+    <input id="nome" /><input id="adultos" value="0" /><input id="criancas" value="0" /><input id="whatsapp" />
+    <div id="form-error"></div><div id="success-screen"></div>
+    <span id="s-date"></span><span id="s-time"></span><span id="s-place"></span>
+    <a id="maps-link-success" href="#"></a>
+  </div>
+
   <!-- FIREBASE SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
   <!-- ÁUDIO DE FUNDO -->
   <audio id="bg-audio" src="Miguel_Chegou.mp3" preload="auto" loop></audio>
-
-  <!-- BOTÃO FLUTUANTE DE ÁUDIO -->
   <button id="audio-btn" aria-label="Controlar música" title="Música">🔊</button>
 
-  <!-- SCRIPTS -->
   <script src="firebase-config.js"></script>
   <script src="script.js"></script>
 </body>
