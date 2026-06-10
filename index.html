@@ -12,100 +12,23 @@
 </head>
 <body>
 
-  <!-- CANVAS CONFETTI -->
   <canvas id="confetti-canvas"></canvas>
-
-  <!-- PAWS BACKGROUND -->
   <div class="paws-bg" aria-hidden="true"></div>
 
-  <!-- ══════════════════════════════
-       SEÇÃO 1: NEYMAR MEME HERO
-       ══════════════════════════════ -->
+  <!-- SEÇÃO 1: NEYMAR -->
   <section class="neymar-hero">
-    <div class="neymar-stars" aria-hidden="true"></div>
-
     <div class="neymar-wrap">
-      <!-- Papel sobreposto via HTML/CSS sobre a imagem -->
-      <div class="neymar-paper">
-        <span>Ihhh confirmações para o</span>
-        <span>aniversário do Miguel</span>
-        <span class="neymar-paper-destaque">ENCERRADAS! 😱</span>
-      </div>
       <img src="assets/neymar_meme.png" alt="Confirmações encerradas!" class="neymar-img" />
     </div>
-
-    <p class="neymar-caption">Confirmações encerradas! 🔒</p>
+    <p class="neymar-caption">Ihhh… confirmações para o aniversário do Miguel encerradas! 😱🔒</p>
   </section>
 
-  <!-- ══════════════════════════════
-       SEÇÃO 2: CARD ENCERRAMENTO
-       ══════════════════════════════ -->
-  <section class="encerramento-section">
-    <div class="encerramento-card">
-      <div class="encerramento-card-icon">🔒</div>
-      <h3 class="encerramento-card-title">Confirmações Encerradas</h3>
-      <p class="encerramento-card-msg">
-        Agradecemos imensamente o carinho e a animação de todos! 🎉<br/><br/>
-        As confirmações de presença para o aniversário do <strong>Miguel</strong> foram encerradas.<br/><br/>
-        Para obter mais informações ou tirar dúvidas, entre em contato diretamente com os pais do pequeno. 💙
-      </p>
-      <p class="encerramento-card-sub">Obrigado por fazer parte dessa festa tão especial! 🐾</p>
-      <div class="encerramento-patas">🐾 🐾 🐾</div>
-    </div>
-  </section>
-
-  <!-- ══════════════════════════════
-       SEÇÃO 3: HERO / ENCARTE
-       ══════════════════════════════ -->
+  <!-- SEÇÃO 2: ENCARTE DA FESTA -->
   <header class="hero">
     <div class="hero-badge">🐾 MIGUEL FAZ 4 ANOS! 🐾</div>
-
     <img src="assets/banner.png" class="hero-banner" alt="Banner Patrulha Canina"/>
-
     <div class="hero-tagline"><span>Uma missão especial te aguardou!</span></div>
-
-    <!-- COUNTDOWN -->
-    <div class="countdown-wrapper">
-      <div class="countdown-label">⏰ Contagem da missão:</div>
-      <div class="countdown-boxes" id="countdown">
-        <div class="count-box"><span id="cd-days">--</span><small>dias</small></div>
-        <div class="count-sep">:</div>
-        <div class="count-box"><span id="cd-hours">--</span><small>horas</small></div>
-        <div class="count-sep">:</div>
-        <div class="count-box"><span id="cd-mins">--</span><small>min</small></div>
-        <div class="count-sep">:</div>
-        <div class="count-box"><span id="cd-secs">--</span><small>seg</small></div>
-      </div>
-      <div id="event-passed-msg" class="event-passed hidden">🎉 O evento aconteceu! Que festa incrível! 🎉</div>
-    </div>
   </header>
-
-  <!-- ══════════════════════════════
-       SEÇÃO 4: DETALHES DO EVENTO
-       ══════════════════════════════ -->
-  <section class="event-details">
-    <h2 class="section-title">📋 Detalhes da Missão</h2>
-    <div class="details-grid">
-      <div class="detail-card">
-        <div class="detail-icon">📅</div>
-        <div class="detail-label">Data</div>
-        <div class="detail-value" id="event-date-display">__/__/____</div>
-      </div>
-      <div class="detail-card">
-        <div class="detail-icon">⏰</div>
-        <div class="detail-label">Horário</div>
-        <div class="detail-value" id="event-time-display">__h00</div>
-      </div>
-      <div class="detail-card">
-        <div class="detail-icon">📍</div>
-        <div class="detail-label">Local</div>
-        <div class="detail-value" id="event-place-display">Nome do Local</div>
-      </div>
-    </div>
-    <a class="maps-btn" id="maps-link" href="#" target="_blank" rel="noopener">
-      🗺️ Ver no Google Maps
-    </a>
-  </section>
 
   <!-- FOOTER -->
   <footer class="site-footer">
@@ -114,9 +37,7 @@
     <p class="footer-small">® Todos os direitos reservados 2026 • Pai do Miguel rsrsrs</p>
   </footer>
 
-  <!-- ══════════════════════════════
-       CAMPOS OCULTOS — lógica JS preservada
-       ══════════════════════════════ -->
+  <!-- CAMPOS OCULTOS — lógica JS preservada -->
   <div style="display:none" aria-hidden="true">
     <input id="nome" />
     <input id="adultos" value="0" />
@@ -127,16 +48,23 @@
     <span id="s-date"></span>
     <span id="s-time"></span>
     <span id="s-place"></span>
+    <a id="maps-link" href="#"></a>
     <a id="maps-link-success" href="#"></a>
     <button id="confirm-btn"><span class="btn-text"></span><span class="btn-loader hidden" id="btn-loader"></span></button>
     <div id="form-wrapper"></div>
+    <div id="countdown"></div>
+    <span id="cd-days"></span><span id="cd-hours"></span>
+    <span id="cd-mins"></span><span id="cd-secs"></span>
+    <div id="event-passed-msg"></div>
+    <span id="event-date-display"></span>
+    <span id="event-time-display"></span>
+    <span id="event-place-display"></span>
   </div>
 
   <!-- FIREBASE SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
-  <!-- ÁUDIO DE FUNDO -->
   <audio id="bg-audio" src="assets/Miguel_Chegou.mp3" preload="auto" loop></audio>
   <button id="audio-btn" aria-label="Controlar música" title="Música">🔊</button>
 
